@@ -27,9 +27,14 @@ type GelfLog struct {
 }
 
 type Config struct {
-	ListenAddr  string
-	HandleRaw   func([]byte)
-	HandleGELF  func(*GelfLog, map[string]interface{})
+	ListenAddr string
+
+	// handle raw message, HandleGELF wouldn't be called if HandleRaw is setted
+	HandleRaw func([]byte)
+
+	// handle GELF message
+	HandleGELF func(*GelfLog, map[string]interface{})
+
 	HandleError func(*net.UDPAddr, error)
 }
 
