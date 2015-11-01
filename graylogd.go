@@ -314,28 +314,3 @@ func detect(b []byte) payloadType {
 		return payloadPlain
 	}
 }
-
-func main() {
-	conf := Config{
-		ListenAddr: ":12201",
-		HandleRaw: func(b []byte) {
-			fmt.Println(string(b[:100]))
-			fmt.Println(len(b))
-		},
-		HandleGELF: func(gelf *GelfLog, addi map[string]interface{}) {
-			fmt.Println(gelf)
-			fmt.Println(addi)
-		},
-		HandleError: func(addr *net.UDPAddr, err error) {
-			fmt.Println("err:", err)
-		},
-	}
-
-	logd, _ := NewGraylogd(conf)
-	err := logd.Run()
-	if err != nil {
-		fmt.Println("run failed:", err)
-		return
-	}
-	select {}
-}
