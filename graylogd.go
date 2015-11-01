@@ -146,6 +146,9 @@ func (srv *Graylogd) handleMsg(b []byte) error {
 		if err != nil {
 			return err
 		}
+		if gelf.Timestamp <= 0 {
+			gelf.Timestamp = float64(time.Now().UnixNano()) / float64(time.Second)
+		}
 
 		var v map[string]interface{}
 		err = json.Unmarshal(b, &v)

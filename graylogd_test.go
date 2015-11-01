@@ -61,6 +61,12 @@ func TestGELF(t *testing.T) {
 	daeCfg := Config{
 		ListenAddr: ":8948",
 		HandleGELF: func(gelf *GelfLog, addi map[string]interface{}) {
+			if realLog.Timestamp == 0 {
+				delta := float64(time.Now().UnixNano())/float64(time.Second) - gelf.Timestamp
+				ast.True(delta < 1)
+				gelf.Timestamp = realLog.Timestamp
+			}
+
 			ast.Equal(realLog, *gelf)
 			ast.Equal(realAddi, addi)
 			for k, _ := range addi {
@@ -83,18 +89,27 @@ func TestGELF(t *testing.T) {
 		GraylogHostname: "127.0.0.1",
 	})
 
-	realLog = GelfLog{
-		Version:   "1.0",
-		Host:      "localhost",
-		ShortMsg:  "short blabla",
-		FullMsg:   "lllllllllllllllllllll",
-		Timestamp: float64(time.Now().UnixNano() / int64(time.Second)),
-		Level:     1,
-		Facility:  "graylogd test",
+	logs := []GelfLog{
+		{
+			Version:   "1.0",
+			Host:      "localhost",
+			ShortMsg:  "short blabla",
+			FullMsg:   "lllllllllllllllllllll",
+			Timestamp: float64(time.Now().UnixNano()) / float64(time.Second),
+			Level:     1,
+			Facility:  "graylogd test",
+		},
+		{
+			Timestamp: float64(time.Now().UnixNano()) / float64(time.Second),
+		},
+		{},
 	}
-	b, err := json.Marshal(realLog)
-	ast.Nil(err)
+	for _, log := range logs {
+		realLog = log
+		b, err := json.Marshal(realLog)
+		ast.Nil(err)
+		client.Log(string(b))
+		<-waitChan
+	}
 
-	client.Log(string(b))
-	<-waitChan
 }
