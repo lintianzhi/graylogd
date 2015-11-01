@@ -10,8 +10,9 @@ package main
 
 import (
     "fmt"
-    "github.com/lintianzhi/graylogd"
     "net"
+
+    "github.com/lintianzhi/graylogd"
 )
 
 func main() {
