@@ -19,7 +19,7 @@ type GelfLog struct {
 	Host      string  `json:"host"`
 	ShortMsg  string  `json:"short_message"`
 	FullMsg   string  `json:"full_message"`
-	Timestamp float64 `json:"timestamp"`
+	Timestamp float64 `json:"timestamp,string"`
 	Level     int     `json:"level"`
 	Facility  string  `json:"facility"`
 	Line      int     `json:"line"`
